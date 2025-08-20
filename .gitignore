@@ -51,3 +51,36 @@ dist/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Dependencies - anywhere in the project
+**/node_modules/
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+
+# Package lock files (optional - some prefer to keep these)
+**/package-lock.json
+
+# Build outputs
+**/dist/
+**/build/
+
+# Environment files
+**/.env
+**/.env.*
+
+# Claude Code files
+.claude*
+claude.json
+.anthropic*
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+**/*.log
