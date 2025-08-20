@@ -120,7 +120,7 @@ function App() {
   ];
 
   const NavBar = () => (
-    <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-4 shadow-lg">
+    <div className="bg-gradient-to-r from-green-700 to-green-600 text-white p-4 shadow-lg">
       <div className="max-w-6xl mx-auto flex justify-between items-center">
         <div className="flex items-center space-x-3">
           <div className="text-2xl font-bold">🎬 ClipIt</div>
