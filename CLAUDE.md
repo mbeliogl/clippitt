@@ -4,7 +4,35 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-ClipIt is a clipping marketplace connecting content creators with video clippers. Features a React TypeScript frontend and Express.js TypeScript backend with PostgreSQL database. The platform supports user authentication, job posting, job applications, and role-based dashboards.
+ClipIt is a revolutionary platform that connects content creators with clippers to solve expensive social media advertising through viral content creation.
+
+### The Problem
+Social media advertising is expensive for both new creators and established projects. Traditional advertising methods are costly and often generate less engaged traffic. For long-form content (podcasts, talk shows, educational content), virality is crucial for success - and clippers are the key to creating that virality.
+
+### The Solution
+ClipIt allows content creators to post jobs with assigned payout amounts. Clippers can sign up for jobs, clip content, edit it, and post it on their own or dedicated pages. Success depends on the clippers' ability to create viral content.
+
+### Value Proposition
+
+**For Content Creators:**
+- Risk-free exposure: Pay only for successful viral clips
+- Much cheaper than traditional social media advertising
+- Generates highly engaged traffic (new followers, views, engagement)
+- Worst case: Pay viral clippers but still cost less than ads
+- Focus on content creation while clippers handle viral marketing
+
+**For Clippers:**
+- Risk-free opportunity: Success depends entirely on their viral skills
+- Extremely rewarding when clips go viral
+- Build portfolio and reputation through successful campaigns
+- Monetize creativity and social media expertise
+- Flexible work - choose jobs that match their style
+
+### Business Model
+The platform takes a fee/percentage from successful transactions. The exact payment structure (membership vs. percentage of revenue) and payment allocation system are still being defined and will be implemented as the platform evolves.
+
+### Technical Implementation
+Features a React TypeScript frontend and Express.js TypeScript backend with PostgreSQL database. The platform supports user authentication, job posting, job applications, and role-based dashboards.
 
 ## Development Commands
 
@@ -124,7 +152,7 @@ FRONTEND_URL=http://localhost:3000
 
 ### Frontend Components
 - `src/App.tsx` - Main routing with all application routes
-- `src/LandingPage.tsx` - Homepage with login/signup buttons
+- `src/LandingPage.tsx` - Modern Apple-inspired homepage with animations and multi-section layout
 - `src/Login.tsx` - Shared login form
 - `src/Register.tsx` - Registration with role selection
 - `src/JobMarketplace.tsx` - Job listings with search/filter
@@ -139,6 +167,37 @@ FRONTEND_URL=http://localhost:3000
 - `backend/src/routes/auth.ts` - Registration, login, user endpoints
 - `backend/src/routes/jobs.ts` - Job CRUD and application management
 
+## Landing Page Design
+
+The landing page features a modern, Apple-inspired design with:
+
+### Visual Design
+- **Gradient Background**: Gray-900 → Blue-900 → Purple-900 gradient
+- **Glassmorphism Effects**: Frosted glass components with backdrop blur
+- **Clean Typography**: Large headlines with proper hierarchy (5xl to 8xl)
+- **Minimal Color Palette**: Blues, purples, whites with high contrast
+- **Rounded Design Language**: 2xl border radius throughout
+
+### Interactive Features
+- **Scroll-Adaptive Navigation**: Transparent → solid with color transitions
+- **Staggered Animations**: Progressive entrance animations with delays
+- **Intersection Observer**: Feature cards animate on scroll
+- **Auto-Rotating Testimonials**: 4-second carousel rotation
+- **Micro-Interactions**: Scale transforms, icon animations, smooth transitions
+
+### Sections
+1. **Hero Section**: Main headline with animated badge and CTAs
+2. **Features Section**: Three feature cards (Lightning Fast, Expert Network, Premium Quality)
+3. **Testimonials**: Rotating customer reviews with avatars
+4. **Final CTA**: Conversion-focused call-to-action
+5. **Footer**: Clean branding and copyright
+
+### Responsive Design
+- **Mobile-First**: Breakpoints at sm:/md:/lg: with proper scaling
+- **Typography Scaling**: Text responsive from mobile to desktop
+- **Grid Layouts**: Cards stack on mobile, grid on larger screens
+- **Navigation Adaptation**: Simplified nav on small screens
+
 ## Current Development Status
 
 - ✅ User authentication (login/register) with JWT
@@ -146,7 +205,26 @@ FRONTEND_URL=http://localhost:3000
 - ✅ Job marketplace with filtering and search
 - ✅ Job application system for clippers
 - ✅ Database schema and API endpoints
+- ✅ Modern Apple-inspired landing page with animations
 - ⚠️ Job creation form (placeholder buttons exist)
 - ⚠️ Payment integration
 - ⚠️ File upload for clips
 - ⚠️ User profile management
+
+## Development Workflow Notes
+
+### Daily Shutdown Procedure
+To conserve laptop resources when done working:
+1. Stop React dev server: `Ctrl+C` in npm start terminal
+2. Stop backend server: `Ctrl+C` in backend terminal (or it's handled automatically)
+3. Stop PostgreSQL: `brew services stop postgresql@14`
+
+### Daily Startup Procedure  
+1. Start PostgreSQL: `brew services start postgresql@14`
+2. Start backend: `cd backend && npm run dev`
+3. Start frontend: `npm start`
+
+### Git Authentication
+- Uses personal access tokens (not password authentication)
+- Credentials cached in macOS keychain via `osxkeychain` helper
+- Repository: `https://github.com/mbeliogl/clippitt.git`

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, Play, Sparkles, Users, Zap, ChevronDown } from 'lucide-react';
+import { ArrowRight, Play, Trophy, BadgeDollarSign, Eye, Zap, ChevronDown, } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Navigation: React.FC = () => {
@@ -122,21 +122,21 @@ const LandingPage: React.FC = () => {
 
   const testimonials = [
     {
-      name: "Sarah Chen",
-      role: "Content Creator",
+      name: "Bryan",
+      role: "@Whatever Host",
       content: "ClipIt transformed my workflow. I can focus on creating while talented clippers handle the editing.",
       avatar: "👩‍💻"
     },
     {
-      name: "Mike Rodriguez", 
-      role: "Video Clipper",
-      content: "Amazing platform to showcase my skills and earn from my passion for video editing.",
+      name: "Mike", 
+      role: "Professional Clipper",
+      content: "I used to drive uber. Now I can follow my passion for Social Media and get paid 5x",
       avatar: "🎬"
     },
     {
-      name: "Alex Thompson",
+      name: "Alex",
       role: "YouTuber",
-      content: "The quality of clips I receive is incredible. My engagement has increased 3x!",
+      content: "Someone clipped my content and now my engagement has increased 10x!",
       avatar: "📺"
     }
   ];
@@ -163,8 +163,8 @@ const LandingPage: React.FC = () => {
         <div className="relative z-10 text-center max-w-6xl mx-auto">
           <AnimatedText>
             <div className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white/90 text-sm mb-8">
-              <Sparkles className="w-4 h-4 mr-2" />
-              Where creativity meets expertise
+              <Trophy className="w-4 h-4 mr-2" />
+              POST IT. CLIP IT. GET PAID. 
             </div>
           </AnimatedText>
 
@@ -172,14 +172,14 @@ const LandingPage: React.FC = () => {
             <h1 className="text-5xl sm:text-7xl lg:text-8xl font-bold text-white mb-6 leading-tight">
               The Future of
               <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                {" "}Video Clipping
+                {" "}Social Media Advertising
               </span>
             </h1>
           </AnimatedText>
 
           <AnimatedText delay={400}>
             <p className="text-xl sm:text-2xl text-white/80 mb-12 max-w-3xl mx-auto leading-relaxed">
-              Connect with talented video editors, streamline your content creation, 
+              Connect with talented video editors, gain exposure, 
               and scale your digital presence like never before.
             </p>
           </AnimatedText>
@@ -190,7 +190,7 @@ const LandingPage: React.FC = () => {
                 to="/register"
                 className="group bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl flex items-center"
               >
-                Start Creating
+                Join
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link 
@@ -219,27 +219,28 @@ const LandingPage: React.FC = () => {
               Why Choose ClipIt?
             </h2>
             <p className="text-xl text-white/70 max-w-2xl mx-auto">
-              Experience the perfect blend of technology and creativity
+              ClipIt connects <span className="text-blue-400 font-semibold">creators</span> with <span className="text-purple-400 font-semibold">clippers</span> to generate viral content as a <span className="text-green-400 font-semibold">cost-effective alternative</span> to traditional social media advertising.
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
             <FeatureCard
-              icon={<Zap className="w-12 h-12" />}
-              title="Lightning Fast"
-              description="Get your clips delivered in record time with our streamlined workflow and talented clipper network."
+              icon={<Eye className="w-12 h-12" />}
+              title="Gain Exposure"
+              description="Creators: Let talented clippers boost your online presense at a fraction of the SM advertising rates."
               delay={0}
             />
             <FeatureCard
-              icon={<Users className="w-12 h-12" />}
-              title="Expert Network"
-              description="Connect with vetted professionals who understand your vision and deliver exceptional results."
+              icon={<Zap className="w-12 h-12" />}
+              title="Go Viral"
+              description="Clippers: Let your creativity speak. Sign up for campaigns and test your viral content & editing skills."
               delay={200}
             />
             <FeatureCard
-              icon={<Sparkles className="w-12 h-12" />}
-              title="Premium Quality"
-              description="Every clip is crafted to perfection, ensuring your content stands out in the digital landscape."
+              icon={<BadgeDollarSign className="w-12 h-12" />}
+              
+              title="Get Paid"
+              description="Content creators enjoy additional traffic & attention while Clippers sharpen their skills and get generously rewarded."
               delay={400}
             />
           </div>
@@ -321,7 +322,7 @@ const LandingPage: React.FC = () => {
               ClipIt
             </div>
             <div className="text-white/60">
-              © 2024 ClipIt. Crafted with passion.
+              © 2025 ClipIt. All rights reserved.
             </div>
           </div>
         </div>
