@@ -90,7 +90,8 @@ router.get('/', async (req, res: Response) => {
       averageViews: job.average_views,
       applicationCount: parseInt(job.application_count),
       createdAt: job.created_at,
-      updatedAt: job.updated_at
+      updatedAt: job.updated_at,
+      videoMetrics: job.video_metrics
     }));
 
     res.json(jobs);
@@ -150,7 +151,8 @@ router.get('/:id', async (req, res: Response) => {
       averageViews: job.average_views,
       applicationCount: parseInt(applicationResult.rows[0].count),
       createdAt: job.created_at,
-      updatedAt: job.updated_at
+      updatedAt: job.updated_at,
+      videoMetrics: job.video_metrics
     });
   } catch (error) {
     console.error('Get job error:', error);

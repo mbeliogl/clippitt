@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Filter, Clock, DollarSign, Users, Calendar } from 'lucide-react';
+import { Search, Filter, Clock, DollarSign, Users, Calendar, Eye, Heart, MessageCircle } from 'lucide-react';
 
 interface Job {
   id: string;
@@ -22,6 +22,14 @@ interface Job {
   applicationCount: number;
   createdAt: string;
   updatedAt: string;
+  videoMetrics?: {
+    views: number;
+    likes: number;
+    comments: number;
+    channelName: string;
+    publishedAt: string;
+    thumbnailUrl?: string;
+  };
 }
 
 const JobMarketplace: React.FC = () => {
@@ -229,6 +237,29 @@ const JobMarketplace: React.FC = () => {
                     <span>{job.applicationCount} applications</span>
                   </div>
                 </div>
+
+                {/* Video Metrics */}
+                {job.videoMetrics && (
+                  <div className="bg-gray-50 rounded-lg p-3 mb-4">
+                    <div className="flex items-center justify-between text-xs text-gray-600 mb-2">
+                      <span className="font-medium">Source: {job.videoMetrics.channelName}</span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 text-xs">
+                      <div className="flex items-center">
+                        <Eye className="w-3 h-3 mr-1 text-blue-500" />
+                        <span className="font-medium text-blue-600">{job.videoMetrics.views.toLocaleString()}</span>
+                      </div>
+                      <div className="flex items-center">
+                        <Heart className="w-3 h-3 mr-1 text-red-500" />
+                        <span className="font-medium text-red-600">{job.videoMetrics.likes.toLocaleString()}</span>
+                      </div>
+                      <div className="flex items-center">
+                        <MessageCircle className="w-3 h-3 mr-1 text-green-500" />
+                        <span className="font-medium text-green-600">{job.videoMetrics.comments.toLocaleString()}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {job.tags && job.tags.length > 0 && (
                   <div className="flex flex-wrap gap-1 mb-4">

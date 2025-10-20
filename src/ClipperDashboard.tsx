@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Search, Briefcase, Clock, DollarSign, Star, Settings, LogOut, TrendingUp } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Search, Briefcase, Clock, DollarSign, Star, Settings, LogOut, TrendingUp, Home } from 'lucide-react';
+import { useAuth } from './AuthContext';
 
 interface User {
   id: string;
@@ -38,7 +39,8 @@ interface Application {
 }
 
 const ClipperDashboard: React.FC = () => {
-  const [user, setUser] = useState<User | null>(null);
+  const { user, logout, token } = useAuth();
+  const navigate = useNavigate();
   const [recentJobs, setRecentJobs] = useState<Job[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,17 +53,11 @@ const ClipperDashboard: React.FC = () => {
   });
 
   useEffect(() => {
-    loadUserData();
-    loadRecentJobs();
-    loadApplications();
-  }, []);
-
-  const loadUserData = () => {
-    const userData = localStorage.getItem('user');
-    if (userData) {
-      setUser(JSON.parse(userData));
+    if (token) {
+      loadRecentJobs();
+      loadApplications();
     }
-  };
+  }, [token]);
 
   const loadRecentJobs = async () => {
     try {
@@ -79,7 +75,6 @@ const ClipperDashboard: React.FC = () => {
 
   const loadApplications = async () => {
     try {
-      const token = localStorage.getItem('token');
       if (!token) return;
 
       // This endpoint would need to be added to the backend
@@ -99,9 +94,8 @@ const ClipperDashboard: React.FC = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    window.location.href = '/';
+    logout();
+    navigate('/', { replace: true });
   };
 
   const formatCurrency = (amount: number) => {
@@ -155,6 +149,13 @@ const ClipperDashboard: React.FC = () => {
               <h1 className="text-2xl font-bold text-gray-900">Clipper Dashboard</h1>
             </div>
             <div className="flex items-center space-x-4">
+              <Link 
+                to="/" 
+                className="text-gray-600 hover:text-gray-900"
+                title="Home"
+              >
+                <Home className="w-5 h-5" />
+              </Link>
               <Link to="/jobs" className="text-gray-600 hover:text-gray-900">
                 <Search className="w-5 h-5" />
               </Link>

@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { Home } from 'lucide-react';
+import { useAuth } from './AuthContext';
 
 const RegisterPage: React.FC = () => {
+  const { login, isAuthenticated, user } = useAuth();
+  const navigate = useNavigate();
+  
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -13,6 +18,14 @@ const RegisterPage: React.FC = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Redirect if already authenticated
+  React.useEffect(() => {
+    if (isAuthenticated && user) {
+      const redirectPath = user.role === 'clipper' ? '/clipper-dashboard' : '/creator-dashboard';
+      navigate(redirectPath, { replace: true });
+    }
+  }, [isAuthenticated, user, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
@@ -52,15 +65,12 @@ const RegisterPage: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
+        // Use the auth context to set authentication state
+        login(data.token, data.user);
         
-        // Redirect based on user role
-        if (data.user.role === 'clipper') {
-          window.location.href = '/clipper-dashboard';
-        } else {
-          window.location.href = '/creator-dashboard';
-        }
+        // Redirect to appropriate dashboard based on role
+        const redirectPath = data.user.role === 'clipper' ? '/clipper-dashboard' : '/creator-dashboard';
+        navigate(redirectPath, { replace: true });
       } else {
         setError(data.error || 'Registration failed');
       }
@@ -74,6 +84,15 @@ const RegisterPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      {/* Home Button */}
+      <Link 
+        to="/" 
+        className="fixed top-6 left-6 flex items-center px-4 py-2 bg-white border border-gray-300 rounded-full text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-300 shadow-sm z-10"
+      >
+        <Home className="w-4 h-4 mr-2" />
+        <span className="hidden sm:block">Home</span>
+      </Link>
+
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">

@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, Play, Trophy, BadgeDollarSign, Eye, Zap, ChevronDown, Scale, Plug } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { ArrowRight, Play, Trophy, BadgeDollarSign, Eye, Zap, ChevronDown, Scale, Plug, User, LogOut } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from './AuthContext';
 
 const Navigation: React.FC = () => {
+  const { isAuthenticated, user, logout } = useAuth();
+  const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -13,6 +16,11 @@ const Navigation: React.FC = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/', { replace: true });
+  };
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -37,22 +45,55 @@ const Navigation: React.FC = () => {
             >
               Browse Jobs
             </Link>
-            <Link 
-              to="/login"
-              className={`px-4 py-2 rounded-full transition-all duration-300 ${
-                isScrolled 
-                  ? 'text-gray-700 hover:bg-gray-100' 
-                  : 'text-white/90 hover:bg-white/10'
-              }`}
-            >
-              Sign In
-            </Link>
-            <Link 
-              to="/register"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105"
-            >
-              Get Started
-            </Link>
+            
+            {isAuthenticated && user ? (
+              <>
+                {/* Dashboard button */}
+                <Link 
+                  to={user.role === 'creator' ? '/creator-dashboard' : '/clipper-dashboard'}
+                  className={`flex items-center px-4 py-2 rounded-full transition-all duration-300 ${
+                    isScrolled 
+                      ? 'text-gray-700 hover:bg-gray-100' 
+                      : 'text-white/90 hover:bg-white/10'
+                  }`}
+                >
+                  <User className="w-4 h-4 mr-2" />
+                  Dashboard
+                </Link>
+                
+                {/* Logout button */}
+                <button
+                  onClick={handleLogout}
+                  className={`flex items-center px-4 py-2 rounded-full transition-all duration-300 ${
+                    isScrolled 
+                      ? 'text-gray-700 hover:bg-gray-100' 
+                      : 'text-white/90 hover:bg-white/10'
+                  }`}
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  <span className="hidden sm:block">Logout</span>
+                </button>
+              </>
+            ) : (
+              <>
+                <Link 
+                  to="/login"
+                  className={`px-4 py-2 rounded-full transition-all duration-300 ${
+                    isScrolled 
+                      ? 'text-gray-700 hover:bg-gray-100' 
+                      : 'text-white/90 hover:bg-white/10'
+                  }`}
+                >
+                  Sign In
+                </Link>
+                <Link 
+                  to="/register"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105"
+                >
+                  Get Started
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -118,6 +159,7 @@ const FeatureCard: React.FC<{
 };
 
 const LandingPage: React.FC = () => {
+  const { isAuthenticated, user } = useAuth();
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
 
   const testimonials = [
@@ -290,27 +332,57 @@ const LandingPage: React.FC = () => {
       {/* CTA Section */}
       <section className="py-32 px-6 sm:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl sm:text-6xl font-bold text-white mb-8">
-            Ready to Get Started?
-          </h2>
-          <p className="text-xl text-white/80 mb-12 max-w-2xl mx-auto">
-            Join thousands of creators and clippers who are already transforming their content workflow.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <Link 
-              to="/register"
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-12 py-4 rounded-2xl font-bold text-xl transition-all duration-300 transform hover:scale-105 shadow-2xl"
-            >
-              Join ClipIt Today
-            </Link>
-            <Link 
-              to="/about"
-              className="text-white/80 hover:text-white text-lg underline underline-offset-4 transition-colors"
-            >
-              Learn More About Us
-            </Link>
-          </div>
+          {isAuthenticated && user ? (
+            <>
+              <h2 className="text-4xl sm:text-6xl font-bold text-white mb-8">
+                Welcome back, {user.firstName}!
+              </h2>
+              <p className="text-xl text-white/80 mb-12 max-w-2xl mx-auto">
+                Ready to continue your {user.role === 'creator' ? 'content creation' : 'clipping'} journey? 
+                Access your dashboard to manage your projects.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                <Link 
+                  to={user.role === 'creator' ? '/creator-dashboard' : '/clipper-dashboard'}
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-12 py-4 rounded-2xl font-bold text-xl transition-all duration-300 transform hover:scale-105 shadow-2xl flex items-center"
+                >
+                  <User className="w-6 h-6 mr-3" />
+                  Go to Dashboard
+                </Link>
+                <Link 
+                  to="/jobs"
+                  className="text-white/80 hover:text-white text-lg underline underline-offset-4 transition-colors"
+                >
+                  Browse Jobs
+                </Link>
+              </div>
+            </>
+          ) : (
+            <>
+              <h2 className="text-4xl sm:text-6xl font-bold text-white mb-8">
+                Ready to Get Started?
+              </h2>
+              <p className="text-xl text-white/80 mb-12 max-w-2xl mx-auto">
+                Join thousands of creators and clippers who are already transforming their content workflow.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                <Link 
+                  to="/register"
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-12 py-4 rounded-2xl font-bold text-xl transition-all duration-300 transform hover:scale-105 shadow-2xl"
+                >
+                  Join ClipIt Today
+                </Link>
+                <Link 
+                  to="/about"
+                  className="text-white/80 hover:text-white text-lg underline underline-offset-4 transition-colors"
+                >
+                  Learn More About Us
+                </Link>
+              </div>
+            </>
+          )}
         </div>
       </section>
 

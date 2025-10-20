@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Clock, DollarSign, Users, Calendar, Star, Play, FileText, Target } from 'lucide-react';
+import { ArrowLeft, Clock, DollarSign, Users, Calendar, Star, Play, FileText, Target, Eye, Heart, MessageCircle, Tag, Home } from 'lucide-react';
+import { useAuth } from './AuthContext';
 
 interface JobDetail {
   id: string;
@@ -27,10 +28,19 @@ interface JobDetail {
   applicationCount: number;
   createdAt: string;
   updatedAt: string;
+  videoMetrics?: {
+    views: number;
+    likes: number;
+    comments: number;
+    channelName: string;
+    publishedAt: string;
+    thumbnailUrl?: string;
+  };
 }
 
 const JobDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const { token } = useAuth();
   const [job, setJob] = useState<JobDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -72,7 +82,6 @@ const JobDetail: React.FC = () => {
     setApplicationError('');
 
     try {
-      const token = localStorage.getItem('token');
       if (!token) {
         setApplicationError('Please login to apply for jobs');
         setApplicationLoading(false);
@@ -162,6 +171,15 @@ const JobDetail: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Home Button */}
+      <Link 
+        to="/" 
+        className="fixed top-6 right-6 flex items-center px-4 py-2 bg-white border border-gray-300 rounded-full text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-300 shadow-sm z-10"
+      >
+        <Home className="w-4 h-4 mr-2" />
+        <span className="hidden sm:block">Home</span>
+      </Link>
+
       {/* Header */}
       <div className="bg-white shadow-sm">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -211,7 +229,7 @@ const JobDetail: React.FC = () => {
                   </p>
                   <div className="flex items-center">
                     <span className="text-sm text-gray-500 mr-2">Creator</span>
-                    {job.creator.rating && (
+                    {job.creator.rating !== null && job.creator.rating !== undefined && typeof job.creator.rating === 'number' && (
                       <div className="flex items-center">
                         <Star className="w-4 h-4 text-yellow-400 fill-current" />
                         <span className="text-sm text-gray-600 ml-1">{job.creator.rating.toFixed(1)}</span>
@@ -238,7 +256,10 @@ const JobDetail: React.FC = () => {
 
               {job.tags && job.tags.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Tags</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                    <Tag className="w-5 h-5 mr-2" />
+                    Tags
+                  </h3>
                   <div className="flex flex-wrap gap-2">
                     {job.tags.map((tag, index) => (
                       <span
@@ -258,18 +279,60 @@ const JobDetail: React.FC = () => {
                   <Play className="w-5 h-5 mr-2" />
                   Source Video
                 </h3>
-                <div className="bg-gray-100 rounded-lg p-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-700">Duration: {formatDuration(job.videoDuration)}</span>
-                    <a
-                      href={job.videoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-                    >
-                      Watch Video
-                    </a>
+                <div className="bg-gray-100 rounded-lg overflow-hidden">
+                  {/* Video Embed */}
+                  <div className="aspect-video">
+                    <iframe
+                      src={job.videoUrl.replace('watch?v=', 'embed/')}
+                      className="w-full h-full"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      title={job.title}
+                    />
                   </div>
+                  
+                  {/* Video Metrics */}
+                  {job.videoMetrics && (
+                    <div className="p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-gray-700">Source: {job.videoMetrics.channelName}</span>
+                        <span className="text-xs text-gray-500">
+                          {new Date(job.videoMetrics.publishedAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-4 gap-4 text-sm">
+                        <div className="flex items-center">
+                          <Clock className="w-4 h-4 mr-2 text-gray-500" />
+                          <div>
+                            <p className="font-semibold text-gray-600">{formatDuration(job.videoDuration)}</p>
+                            <p className="text-gray-500 text-xs">Duration</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center">
+                          <Eye className="w-4 h-4 mr-2 text-blue-500" />
+                          <div>
+                            <p className="font-semibold text-blue-600">{job.videoMetrics.views.toLocaleString()}</p>
+                            <p className="text-gray-500 text-xs">Views</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center">
+                          <Heart className="w-4 h-4 mr-2 text-red-500" />
+                          <div>
+                            <p className="font-semibold text-red-600">{job.videoMetrics.likes.toLocaleString()}</p>
+                            <p className="text-gray-500 text-xs">Likes</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center">
+                          <MessageCircle className="w-4 h-4 mr-2 text-green-500" />
+                          <div>
+                            <p className="font-semibold text-green-600">{job.videoMetrics.comments.toLocaleString()}</p>
+                            <p className="text-gray-500 text-xs">Comments</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
