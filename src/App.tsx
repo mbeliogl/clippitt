@@ -7,6 +7,8 @@ import JobMarketplace from './JobMarketplace';
 import JobDetail from './JobDetail';
 import CreatorDashboard from './CreatorDashboard';
 import ClipperDashboard from './ClipperDashboard';
+import LegalPage from './Legal';
+import IntegrationsPage from './Integrations';
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
         <Route path="/jobs/:id" element={<JobDetail />} />
         <Route path="/creator-dashboard" element={<CreatorDashboard />} />
         <Route path="/clipper-dashboard" element={<ClipperDashboard />} />
+        <Route path="/Legal" element={<LegalPage />} />
+        <Route path='/Integrations' element={<IntegrationsPage />} />
       </Routes>
     </Router>
   );
