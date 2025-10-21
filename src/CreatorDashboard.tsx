@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Plus, Eye, Users, DollarSign, Clock, Settings, LogOut, Briefcase, Heart, MessageCircle, Calendar, TrendingUp, AlertCircle, CheckCircle, Pause, ChevronRight, BarChart3, FileText, Home } from 'lucide-react';
+import { Plus, Eye, Users, DollarSign, Clock, Settings, LogOut, Briefcase, Heart, MessageCircle, Calendar, TrendingUp, AlertCircle, CheckCircle, Pause, ChevronRight, BarChart3, FileText, Home, Bell, X, Info, ExternalLink } from 'lucide-react';
 import { useAuth } from './AuthContext';
 
 interface User {
@@ -50,6 +50,98 @@ const sidebarItems: SidebarItem[] = [
   { id: 'recent-jobs', label: 'Recent Jobs', icon: <Briefcase className="w-4 h-4" /> },
 ];
 
+// Notification Modal Component
+const NotificationsModal: React.FC<{ 
+  isOpen: boolean; 
+  onClose: () => void; 
+  notifications: any[]; 
+}> = ({ isOpen, onClose, notifications }) => {
+  if (!isOpen) return null;
+
+  const getNotificationIcon = (type: string) => {
+    switch (type) {
+      case 'application': return <Users className="w-5 h-5 text-blue-400" />;
+      case 'completion': return <CheckCircle className="w-5 h-5 text-green-400" />;
+      case 'milestone': return <TrendingUp className="w-5 h-5 text-purple-400" />;
+      default: return <Info className="w-5 h-5 text-gray-400" />;
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+        {/* Backdrop */}
+        <div 
+          className="fixed inset-0 transition-opacity bg-black/50 backdrop-blur-sm"
+          onClick={onClose}
+        ></div>
+
+        {/* Modal */}
+        <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-3xl">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-bold text-white flex items-center">
+              <Bell className="w-5 h-5 mr-2" />
+              Notifications
+            </h3>
+            <button
+              onClick={onClose}
+              className="text-white/70 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-all duration-300"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          <div className="space-y-3 max-h-96 overflow-y-auto">
+            {notifications.map((notification) => (
+              <div
+                key={notification.id}
+                className={`p-4 rounded-2xl border transition-all duration-300 ${
+                  notification.read 
+                    ? 'bg-white/5 border-white/10' 
+                    : 'bg-blue-500/10 border-blue-400/30'
+                }`}
+              >
+                <div className="flex items-start space-x-3">
+                  <div className="flex-shrink-0">
+                    {getNotificationIcon(notification.type)}
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-medium text-white text-sm mb-1">
+                      {notification.title}
+                    </h4>
+                    <p className="text-white/70 text-sm mb-2">
+                      {notification.message}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-white/50 text-xs">
+                        {notification.time}
+                      </span>
+                      {notification.jobId && (
+                        <button className="text-blue-400 hover:text-blue-300 text-xs flex items-center">
+                          View Job <ExternalLink className="w-3 h-3 ml-1" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-6 text-center">
+            <button 
+              onClick={onClose}
+              className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl border border-white/20 transition-all duration-300"
+            >
+              Mark All as Read
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Sidebar: React.FC<{ activeSection: string; onSectionClick: (id: string) => void }> = ({ 
   activeSection, 
   onSectionClick 
@@ -90,12 +182,42 @@ const CreatorDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeSection, setActiveSection] = useState('overview');
+  const [showNotifications, setShowNotifications] = useState(false);
   const [stats, setStats] = useState({
     totalJobs: 0,
     activeJobs: 0,
     totalApplications: 0,
     totalSpent: 0
   });
+  const [notifications] = useState([
+    {
+      id: 1,
+      type: 'application',
+      title: 'New Application Received',
+      message: 'Sarah C. applied to your "Podcast Highlights" job',
+      time: '2 minutes ago',
+      read: false,
+      jobId: 'job-123'
+    },
+    {
+      id: 2,
+      type: 'completion',
+      title: 'Clips Submitted',
+      message: 'Mike D. submitted 3 clips for your "Tech Talk" job',
+      time: '1 hour ago',
+      read: false,
+      jobId: 'job-456'
+    },
+    {
+      id: 3,
+      type: 'milestone',
+      title: 'Job Milestone Reached',
+      message: 'Your "Gaming Highlights" job reached 10 applications!',
+      time: '3 hours ago',
+      read: true,
+      jobId: 'job-789'
+    }
+  ]);
 
   useEffect(() => {
     loadJobs();
@@ -207,6 +329,13 @@ const CreatorDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900">
+      {/* Notifications Modal */}
+      <NotificationsModal 
+        isOpen={showNotifications}
+        onClose={() => setShowNotifications(false)}
+        notifications={notifications}
+      />
+      
       <Sidebar activeSection={activeSection} onSectionClick={scrollToSection} />
       
       {/* Header */}
@@ -217,6 +346,20 @@ const CreatorDashboard: React.FC = () => {
               <h1 className="text-2xl font-bold text-white">Creator Dashboard</h1>
             </div>
             <div className="flex items-center space-x-4">
+              {/* Notifications Button */}
+              <button
+                onClick={() => setShowNotifications(true)}
+                className="relative text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all duration-300"
+                title="Notifications"
+              >
+                <Bell className="w-5 h-5" />
+                {notifications.filter(n => !n.read).length > 0 && (
+                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center">
+                    <span className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></span>
+                  </span>
+                )}
+              </button>
+              
               <Link 
                 to="/" 
                 className="text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all duration-300"
@@ -224,10 +367,10 @@ const CreatorDashboard: React.FC = () => {
               >
                 <Home className="w-5 h-5" />
               </Link>
-              <Link to="/jobs" className="text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all duration-300">
+              <Link to="/jobs" className="text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all duration-300" title="Browse Jobs">
                 <Briefcase className="w-5 h-5" />
               </Link>
-              <button className="text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all duration-300">
+              <button className="text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all duration-300" title="Settings">
                 <Settings className="w-5 h-5" />
               </button>
               <button
@@ -242,22 +385,39 @@ const CreatorDashboard: React.FC = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 lg:ml-80 py-8">
-        {/* Welcome Section */}
-        <div id="overview" className="mb-8">
-          <h2 className="text-3xl font-bold text-white mb-2">
-            Welcome back, {user?.firstName}!
-          </h2>
-          <p className="text-white/70">
-            Manage your jobs and find talented clippers for your content.
-          </p>
-        </div>
-
-        {error && (
-          <div className="bg-red-500/10 backdrop-blur-sm border border-red-400/30 text-red-300 px-4 py-3 rounded-2xl mb-6">
-            {error}
+      {/* Main Content */}
+      <div className="lg:ml-80">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Welcome Section */}
+          <div id="overview" className="mb-8">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-3xl font-bold text-white mb-2">
+                  Welcome back, {user?.firstName}!
+                </h2>
+                <p className="text-white/70">
+                  Manage your jobs and find talented clippers for your content.
+                </p>
+              </div>
+              
+              {/* Quick Actions */}
+              <div className="flex space-x-3">
+                <Link
+                  to="/job-creation"
+                  className="flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white rounded-xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create Job
+                </Link>
+              </div>
+            </div>
           </div>
-        )}
+
+          {error && (
+            <div className="bg-red-500/10 backdrop-blur-sm border border-red-400/30 text-red-300 px-4 py-3 rounded-2xl mb-6">
+              {error}
+            </div>
+          )}
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -554,6 +714,7 @@ const CreatorDashboard: React.FC = () => {
               </Link>
             </div>
           )}
+        </div>
         </div>
       </div>
     </div>
