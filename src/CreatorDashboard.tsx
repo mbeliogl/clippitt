@@ -44,11 +44,186 @@ interface Job {
 
 const sidebarItems: SidebarItem[] = [
   { id: 'overview', label: 'Dashboard Overview', icon: <BarChart3 className="w-4 h-4" /> },
+  { id: 'recent-jobs', label: 'Recent Jobs', icon: <Briefcase className="w-4 h-4" /> },
   { id: 'performance', label: 'Job Performance', icon: <TrendingUp className="w-4 h-4" /> },
   { id: 'payouts', label: 'Payout Tracking', icon: <DollarSign className="w-4 h-4" /> },
   { id: 'notifications', label: 'Notifications', icon: <AlertCircle className="w-4 h-4" /> },
-  { id: 'recent-jobs', label: 'Recent Jobs', icon: <Briefcase className="w-4 h-4" /> },
 ];
+
+// All Updates Modal Component
+const AllUpdatesModal: React.FC<{ 
+  isOpen: boolean; 
+  onClose: () => void; 
+}> = ({ isOpen, onClose }) => {
+  if (!isOpen) return null;
+
+  const allUpdates = [
+    {
+      id: 1,
+      type: 'application',
+      title: 'New applications received',
+      message: '5 new clippers applied to "Podcast Highlight Reel" - review applications',
+      time: '2 minutes ago',
+      priority: 'high',
+      link: '/jobs/1'
+    },
+    {
+      id: 2,
+      type: 'deadline',
+      title: 'Deadline approaching',
+      message: '"Modern Wisdom Clips" deadline is in 2 days - check progress',
+      time: '1 hour ago',
+      priority: 'medium',
+      link: '/jobs/2'
+    },
+    {
+      id: 3,
+      type: 'completion',
+      title: 'Job completed successfully',
+      message: '"Tech Talk Highlights" was completed by @clipmaster_pro - payout processed',
+      time: '3 hours ago',
+      priority: 'low',
+      link: '/jobs/3'
+    },
+    {
+      id: 4,
+      type: 'application',
+      title: 'New clipper joined',
+      message: 'Expert clipper @viral_cuts just joined and applied to your "Gaming Highlights" job',
+      time: '6 hours ago',
+      priority: 'medium',
+      link: '/jobs/4'
+    },
+    {
+      id: 5,
+      type: 'milestone',
+      title: 'Milestone reached',
+      message: 'Your "Startup Stories" job reached 20 applications milestone',
+      time: '1 day ago',
+      priority: 'low',
+      link: '/jobs/5'
+    },
+    {
+      id: 6,
+      type: 'payout',
+      title: 'Payout processed',
+      message: 'Payment of $150 successfully sent to @creative_clips for "Podcast Moments"',
+      time: '2 days ago',
+      priority: 'low',
+      link: '/payouts'
+    },
+    {
+      id: 7,
+      type: 'application',
+      title: 'Application withdrawn',
+      message: '@quick_editor withdrew their application from "Tech Reviews" job',
+      time: '3 days ago',
+      priority: 'low',
+      link: '/jobs/6'
+    },
+    {
+      id: 8,
+      type: 'deadline',
+      title: 'Deadline extension requested',
+      message: '@pro_clipper requested 2-day extension for "Educational Content" job',
+      time: '4 days ago',
+      priority: 'medium',
+      link: '/jobs/7'
+    }
+  ];
+
+  const getUpdateIcon = (type: string) => {
+    switch (type) {
+      case 'application': return <Users className="w-5 h-5 text-blue-400" />;
+      case 'completion': return <CheckCircle className="w-5 h-5 text-green-400" />;
+      case 'deadline': return <Clock className="w-5 h-5 text-yellow-400" />;
+      case 'milestone': return <TrendingUp className="w-5 h-5 text-purple-400" />;
+      case 'payout': return <DollarSign className="w-5 h-5 text-green-400" />;
+      default: return <Info className="w-5 h-5 text-gray-400" />;
+    }
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'high': return 'border-red-400/30 bg-red-500/10';
+      case 'medium': return 'border-yellow-400/30 bg-yellow-500/10';
+      case 'low': return 'border-green-400/30 bg-green-500/10';
+      default: return 'border-white/20 bg-white/5';
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+        {/* Backdrop */}
+        <div 
+          className="fixed inset-0 transition-opacity bg-black/50 backdrop-blur-sm"
+          onClick={onClose}
+        ></div>
+
+        {/* Modal */}
+        <div className="inline-block w-full max-w-2xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-3xl">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-bold text-white flex items-center">
+              <AlertCircle className="w-5 h-5 mr-2 text-orange-400" />
+              All Updates
+            </h3>
+            <button
+              onClick={onClose}
+              className="text-white/70 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-all duration-300"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          <div className="space-y-3 max-h-96 overflow-y-auto">
+            {allUpdates.map((update) => (
+              <div
+                key={update.id}
+                className={`p-4 rounded-2xl border transition-all duration-300 ${getPriorityColor(update.priority)}`}
+              >
+                <div className="flex items-start space-x-3">
+                  <div className="flex-shrink-0">
+                    {getUpdateIcon(update.type)}
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-medium text-white text-sm mb-1">
+                      {update.title}
+                    </h4>
+                    <p className="text-white/70 text-sm mb-2">
+                      {update.message}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-white/50 text-xs">
+                        {update.time}
+                      </span>
+                      <Link 
+                        to={update.link}
+                        onClick={onClose}
+                        className="text-blue-400 hover:text-blue-300 text-xs flex items-center transition-colors duration-300"
+                      >
+                        View <ExternalLink className="w-3 h-3 ml-1" />
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-6 text-center">
+            <button 
+              onClick={onClose}
+              className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl border border-white/20 transition-all duration-300"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // Notification Modal Component
 const NotificationsModal: React.FC<{ 
@@ -148,19 +323,19 @@ const Sidebar: React.FC<{ activeSection: string; onSectionClick: (id: string) =>
 }) => {
   return (
     <div className="hidden lg:block fixed left-8 top-1/2 transform -translate-y-1/2 z-40">
-      <div className="bg-white/90 backdrop-blur-sm border border-gray-200 rounded-2xl p-4 space-y-2 shadow-lg">
+      <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 space-y-2">
         {sidebarItems.map((item) => (
           <button
             key={item.id}
             onClick={() => onSectionClick(item.id)}
             className={`flex items-center space-x-3 w-full p-3 rounded-xl transition-all duration-300 text-left group ${
               activeSection === item.id
-                ? 'bg-indigo-600/10 text-indigo-600 border border-indigo-200'
-                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                ? 'bg-blue-600/20 text-blue-300 border border-blue-400/30'
+                : 'text-white/70 hover:bg-white/10 hover:text-white'
             }`}
           >
             <div className={`transition-colors duration-300 ${
-              activeSection === item.id ? 'text-indigo-600' : 'text-gray-500 group-hover:text-gray-700'
+              activeSection === item.id ? 'text-blue-400' : 'text-white/60 group-hover:text-white'
             }`}>
               {item.icon}
             </div>
@@ -183,9 +358,13 @@ const CreatorDashboard: React.FC = () => {
   const [error, setError] = useState('');
   const [activeSection, setActiveSection] = useState('overview');
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showAllUpdates, setShowAllUpdates] = useState(false);
   const [stats, setStats] = useState({
     totalJobs: 0,
     activeJobs: 0,
+    completedJobs: 0,
+    inProgressJobs: 0,
+    pausedJobs: 0,
     totalApplications: 0,
     totalSpent: 0
   });
@@ -233,8 +412,8 @@ const CreatorDashboard: React.FC = () => {
 
   useEffect(() => {
     const observerOptions = {
-      threshold: 0.6,
-      rootMargin: '-100px 0px'
+      threshold: 0.3,
+      rootMargin: '-80px 0px'
     };
 
     const observer = new IntersectionObserver((entries) => {
@@ -245,12 +424,20 @@ const CreatorDashboard: React.FC = () => {
       });
     }, observerOptions);
 
-    sidebarItems.forEach((item) => {
-      const element = document.getElementById(item.id);
-      if (element) observer.observe(element);
-    });
+    // Small delay to ensure elements are rendered
+    const timer = setTimeout(() => {
+      sidebarItems.forEach((item) => {
+        const element = document.getElementById(item.id);
+        if (element) {
+          observer.observe(element);
+        }
+      });
+    }, 100);
 
-    return () => observer.disconnect();
+    return () => {
+      clearTimeout(timer);
+      observer.disconnect();
+    };
   }, []);
 
   const loadJobs = async () => {
@@ -274,10 +461,21 @@ const CreatorDashboard: React.FC = () => {
         // Calculate stats
         const totalJobs = data.length;
         const activeJobs = data.filter((job: Job) => job.status === 'active').length;
+        const completedJobs = data.filter((job: Job) => job.status === 'completed').length;
+        const inProgressJobs = data.filter((job: Job) => job.status === 'active').length; // Active jobs are "in progress"
+        const pausedJobs = data.filter((job: Job) => job.status === 'cancelled' || job.status === 'draft').length;
         const totalApplications = data.reduce((sum: number, job: Job) => sum + job.applicationCount, 0);
         const totalSpent = data.reduce((sum: number, job: Job) => sum + job.budget, 0);
         
-        setStats({ totalJobs, activeJobs, totalApplications, totalSpent });
+        setStats({ 
+          totalJobs, 
+          activeJobs, 
+          completedJobs, 
+          inProgressJobs, 
+          pausedJobs, 
+          totalApplications, 
+          totalSpent 
+        });
       } else {
         // If endpoint doesn't exist, we'll show empty state
         console.log('Jobs endpoint not available for user filtering');
@@ -334,6 +532,12 @@ const CreatorDashboard: React.FC = () => {
         isOpen={showNotifications}
         onClose={() => setShowNotifications(false)}
         notifications={notifications}
+      />
+      
+      {/* All Updates Modal */}
+      <AllUpdatesModal 
+        isOpen={showAllUpdates}
+        onClose={() => setShowAllUpdates(false)}
       />
       
       <Sidebar activeSection={activeSection} onSectionClick={scrollToSection} />
@@ -491,142 +695,6 @@ const CreatorDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Performance Analytics */}
-        <div id="performance" className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          {/* Job Performance Overview */}
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-white flex items-center">
-                <TrendingUp className="w-5 h-5 mr-2 text-blue-400" />
-                Job Performance
-              </h3>
-              <select className="text-sm bg-white/10 border border-white/30 rounded-xl px-3 py-2 text-white">
-                <option className="bg-gray-800 text-white">Last 30 days</option>
-                <option className="bg-gray-800 text-white">Last 7 days</option>
-                <option className="bg-gray-800 text-white">All time</option>
-              </select>
-            </div>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 bg-green-500/20 backdrop-blur-sm border border-green-400/30 rounded-xl">
-                <div className="flex items-center">
-                  <CheckCircle className="w-8 h-8 text-green-400 mr-3" />
-                  <div>
-                    <p className="font-medium text-green-300">Completed Jobs</p>
-                    <p className="text-sm text-green-400/80">Successfully finished</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-2xl font-bold text-green-400">3</p>
-                  <p className="text-xs text-green-400/80">+1 this week</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-between p-3 bg-blue-500/20 backdrop-blur-sm border border-blue-400/30 rounded-xl">
-                <div className="flex items-center">
-                  <Clock className="w-8 h-8 text-blue-400 mr-3" />
-                  <div>
-                    <p className="font-medium text-blue-300">In Progress</p>
-                    <p className="text-sm text-blue-400/80">Currently active</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-2xl font-bold text-blue-400">{stats.activeJobs}</p>
-                  <p className="text-xs text-blue-400/80">Active now</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-between p-3 bg-yellow-500/20 backdrop-blur-sm border border-yellow-400/30 rounded-xl">
-                <div className="flex items-center">
-                  <Pause className="w-8 h-8 text-yellow-400 mr-3" />
-                  <div>
-                    <p className="font-medium text-yellow-300">Paused/Draft</p>
-                    <p className="text-sm text-yellow-400/80">Inactive jobs</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-2xl font-bold text-yellow-400">2</p>
-                  <p className="text-xs text-yellow-400/80">Ready to activate</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Payout Tracking */}
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-white flex items-center">
-                <DollarSign className="w-5 h-5 mr-2 text-green-400" />
-                Payout Tracking
-              </h3>
-              <span className="text-sm text-white/60">Current month</span>
-            </div>
-            <div className="space-y-4">
-              <div className="border-l-4 border-green-400 pl-4 py-2">
-                <p className="text-sm font-medium text-white/70">Total Paid Out</p>
-                <p className="text-2xl font-bold text-green-400">{formatCurrency(1247.50)}</p>
-                <p className="text-xs text-green-400/70">Across 3 completed jobs</p>
-              </div>
-              
-              <div className="border-l-4 border-yellow-400 pl-4 py-2">
-                <p className="text-sm font-medium text-white/70">Pending Payouts</p>
-                <p className="text-2xl font-bold text-yellow-400">{formatCurrency(320.00)}</p>
-                <p className="text-xs text-yellow-400/70">2 jobs awaiting completion</p>
-              </div>
-              
-              <div className="border-l-4 border-blue-400 pl-4 py-2">
-                <p className="text-sm font-medium text-white/70">Budget Allocated</p>
-                <p className="text-2xl font-bold text-blue-400">{formatCurrency(stats.totalSpent)}</p>
-                <p className="text-xs text-blue-400/70">For active jobs</p>
-              </div>
-              
-              <div className="mt-4 pt-4 border-t border-white/20">
-                <Link 
-                  to="/payouts" 
-                  className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors duration-300"
-                >
-                  View detailed payout history →
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Alerts & Notifications */}
-        <div id="notifications" className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 mb-8">
-          <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-            <AlertCircle className="w-5 h-5 mr-2 text-orange-400" />
-            Important Updates
-          </h3>
-          <div className="space-y-3">
-            <div className="flex items-start p-3 bg-blue-500/20 backdrop-blur-sm border border-blue-400/30 rounded-xl">
-              <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-              <div>
-                <p className="text-sm font-medium text-blue-300">New applications received</p>
-                <p className="text-xs text-blue-400/80">5 new clippers applied to "Podcast Highlight Reel" - review applications</p>
-                <Link to="/jobs/1" className="text-xs text-blue-400 hover:text-blue-300 transition-colors duration-300">Review now →</Link>
-              </div>
-            </div>
-            
-            <div className="flex items-start p-3 bg-yellow-500/20 backdrop-blur-sm border border-yellow-400/30 rounded-xl">
-              <div className="w-2 h-2 bg-yellow-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-              <div>
-                <p className="text-sm font-medium text-yellow-300">Deadline approaching</p>
-                <p className="text-xs text-yellow-400/80">"Modern Wisdom Clips" deadline is in 2 days - check progress</p>
-                <Link to="/jobs/2" className="text-xs text-yellow-400 hover:text-yellow-300 transition-colors duration-300">Check status →</Link>
-              </div>
-            </div>
-            
-            <div className="flex items-start p-3 bg-green-500/20 backdrop-blur-sm border border-green-400/30 rounded-xl">
-              <div className="w-2 h-2 bg-green-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-              <div>
-                <p className="text-sm font-medium text-green-300">Job completed successfully</p>
-                <p className="text-xs text-green-400/80">"Tech Talk Highlights" was completed by @clipmaster_pro - payout processed</p>
-                <Link to="/jobs/3" className="text-xs text-green-400 hover:text-green-300 transition-colors duration-300">View results →</Link>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Recent Jobs */}
         <div id="recent-jobs" className="mb-8">
           <div className="flex items-center justify-between mb-6">
@@ -714,6 +782,156 @@ const CreatorDashboard: React.FC = () => {
               </Link>
             </div>
           )}
+        </div>
+
+        {/* Performance Analytics */}
+        <div id="performance" className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          {/* Job Performance Overview */}
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-white flex items-center">
+                <TrendingUp className="w-5 h-5 mr-2 text-blue-400" />
+                Job Performance
+              </h3>
+              <select className="text-sm bg-white/10 border border-white/30 rounded-xl px-3 py-2 text-white">
+                <option className="bg-gray-800 text-white">Last 30 days</option>
+                <option className="bg-gray-800 text-white">Last 7 days</option>
+                <option className="bg-gray-800 text-white">All time</option>
+              </select>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-3 bg-green-500/20 backdrop-blur-sm border border-green-400/30 rounded-xl">
+                <div className="flex items-center">
+                  <CheckCircle className="w-8 h-8 text-green-400 mr-3" />
+                  <div>
+                    <p className="font-medium text-green-300">Completed Jobs</p>
+                    <p className="text-sm text-green-400/80">Successfully finished</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-2xl font-bold text-green-400">{stats.completedJobs}</p>
+                  <p className="text-xs text-green-400/80">Successfully finished</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between p-3 bg-blue-500/20 backdrop-blur-sm border border-blue-400/30 rounded-xl">
+                <div className="flex items-center">
+                  <Clock className="w-8 h-8 text-blue-400 mr-3" />
+                  <div>
+                    <p className="font-medium text-blue-300">In Progress</p>
+                    <p className="text-sm text-blue-400/80">Currently active</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-2xl font-bold text-blue-400">{stats.inProgressJobs}</p>
+                  <p className="text-xs text-blue-400/80">Currently active</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between p-3 bg-yellow-500/20 backdrop-blur-sm border border-yellow-400/30 rounded-xl">
+                <div className="flex items-center">
+                  <Pause className="w-8 h-8 text-yellow-400 mr-3" />
+                  <div>
+                    <p className="font-medium text-yellow-300">Paused/Draft</p>
+                    <p className="text-sm text-yellow-400/80">Inactive jobs</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-2xl font-bold text-yellow-400">{stats.pausedJobs}</p>
+                  <p className="text-xs text-yellow-400/80">Paused or cancelled</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Payout Tracking */}
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-white flex items-center">
+                <DollarSign className="w-5 h-5 mr-2 text-green-400" />
+                Payout Tracking
+              </h3>
+              <span className="text-sm text-white/60">Current month</span>
+            </div>
+            <div className="space-y-4">
+              <div className="border-l-4 border-green-400 pl-4 py-2">
+                <p className="text-sm font-medium text-white/70">Total Paid Out</p>
+                <p className="text-2xl font-bold text-green-400">{formatCurrency(1247.50)}</p>
+                <p className="text-xs text-green-400/70">Across 3 completed jobs</p>
+              </div>
+              
+              <div className="border-l-4 border-yellow-400 pl-4 py-2">
+                <p className="text-sm font-medium text-white/70">Pending Payouts</p>
+                <p className="text-2xl font-bold text-yellow-400">{formatCurrency(320.00)}</p>
+                <p className="text-xs text-yellow-400/70">2 jobs awaiting completion</p>
+              </div>
+              
+              <div className="border-l-4 border-blue-400 pl-4 py-2">
+                <p className="text-sm font-medium text-white/70">Budget Allocated</p>
+                <p className="text-2xl font-bold text-blue-400">{formatCurrency(stats.totalSpent)}</p>
+                <p className="text-xs text-blue-400/70">For active jobs</p>
+              </div>
+              
+              <div className="mt-4 pt-4 border-t border-white/20">
+                <Link 
+                  to="/payouts" 
+                  className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors duration-300"
+                >
+                  View detailed payout history →
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Payout Tracking Section */}
+        <div id="payouts" className="mb-8">
+          {/* This section can be expanded with payout details in the future */}
+        </div>
+
+        {/* Alerts & Notifications */}
+        <div id="notifications" className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-white flex items-center">
+              <AlertCircle className="w-5 h-5 mr-2 text-orange-400" />
+              Important Updates
+            </h3>
+            <button
+              onClick={() => setShowAllUpdates(true)}
+              className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors duration-300 flex items-center"
+            >
+              See all updates
+              <ExternalLink className="w-4 h-4 ml-1" />
+            </button>
+          </div>
+          <div className="space-y-3">
+            <div className="flex items-start p-3 bg-blue-500/20 backdrop-blur-sm border border-blue-400/30 rounded-xl">
+              <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+              <div>
+                <p className="text-sm font-medium text-blue-300">New applications received</p>
+                <p className="text-xs text-blue-400/80">5 new clippers applied to "Podcast Highlight Reel" - review applications</p>
+                <Link to="/jobs/1" className="text-xs text-blue-400 hover:text-blue-300 transition-colors duration-300">Review now →</Link>
+              </div>
+            </div>
+            
+            <div className="flex items-start p-3 bg-yellow-500/20 backdrop-blur-sm border border-yellow-400/30 rounded-xl">
+              <div className="w-2 h-2 bg-yellow-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+              <div>
+                <p className="text-sm font-medium text-yellow-300">Deadline approaching</p>
+                <p className="text-xs text-yellow-400/80">"Modern Wisdom Clips" deadline is in 2 days - check progress</p>
+                <Link to="/jobs/2" className="text-xs text-yellow-400 hover:text-yellow-300 transition-colors duration-300">Check status →</Link>
+              </div>
+            </div>
+            
+            <div className="flex items-start p-3 bg-green-500/20 backdrop-blur-sm border border-green-400/30 rounded-xl">
+              <div className="w-2 h-2 bg-green-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+              <div>
+                <p className="text-sm font-medium text-green-300">Job completed successfully</p>
+                <p className="text-xs text-green-400/80">"Tech Talk Highlights" was completed by @clipmaster_pro - payout processed</p>
+                <Link to="/jobs/3" className="text-xs text-green-400 hover:text-green-300 transition-colors duration-300">View results →</Link>
+              </div>
+            </div>
+          </div>
         </div>
         </div>
       </div>

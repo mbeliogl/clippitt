@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, Play, Trophy, BadgeDollarSign, Eye, Zap, ChevronDown, Scale, Plug, User, LogOut } from 'lucide-react';
+import { ArrowRight, Play, Trophy, BadgeDollarSign, Eye, Zap, ChevronDown, Scale, Plug, User, LogOut, BookOpen } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 
@@ -390,37 +390,41 @@ const LandingPage: React.FC = () => {
       <footer className="py-12 px-6 sm:px-8 border-t border-white/10">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row justify-between items-start w-full">
-            <div className="text-2xl font-bold text-white mb-4 sm:mb-0">
-              ClipIt
-            </div>
-            <div className="flex flex-col space-y-3">
-              <div className="text-white/60 text-right">
-                © 2025 ClipIt. All rights reserved.
+            <div className="flex flex-col space-y-4">
+              <div className="text-2xl font-bold text-white">
+                ClipIt
               </div>
               <div className="flex flex-col space-y-2">
                 <Link 
                   to="/Legal"
                   className="flex items-center text-white/60 hover:text-white/80 transition-colors">
-                  <Scale className="w-4 h-4 mr-1" />
+                  <Scale className="w-4 h-4 mr-2" />
                   Legal
                 </Link>
-                {/* Future links can be added here */}
-                { 
                 <Link 
                   to="/Integrations"
                   className="flex items-center text-white/60 hover:text-white/80 transition-colors">
-                  <Plug className="w-4 h-4 mr-1" />
+                  <Plug className="w-4 h-4 mr-2" />
                   Integrations
                 </Link>
-                /*
+                <Link
+                  to="/about"
+                  className="flex items-center text-white/60 hover:text-white/80 transition-colors">
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  About Us
+                </Link>
+                {/*
                 <Link 
                   to="/contact"
                   className="flex items-center text-white/60 hover:text-white/80 transition-colors">
-                  <Mail className="w-4 h-4 mr-1" />
+                  <Mail className="w-4 h-4 mr-2" />
                   Contact Us
                 </Link>
                 */}
               </div>
+            </div>
+            <div className="text-white/60 mt-4 sm:mt-0">
+              © 2025 ClipIt. All rights reserved.
             </div>
           </div>
         </div>

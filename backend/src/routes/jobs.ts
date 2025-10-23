@@ -15,7 +15,8 @@ router.get('/', async (req, res: Response) => {
       minBudget,
       maxBudget,
       tags,
-      search 
+      search,
+      creator
     } = req.query;
 
     let query = `
@@ -24,11 +25,45 @@ router.get('/', async (req, res: Response) => {
       FROM jobs j
       JOIN users u ON j.creator_id = u.id
       LEFT JOIN job_applications ja ON j.id = ja.job_id
-      WHERE j.status = $1
+      WHERE 1=1
     `;
     
-    const queryParams: any[] = [status];
-    let paramCount = 1;
+    const queryParams: any[] = [];
+    let paramCount = 0;
+
+    // Handle creator=me parameter for dashboard
+    if (creator === 'me') {
+      // Extract user ID from authorization header
+      const authHeader = req.headers.authorization;
+      if (!authHeader?.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Authorization required' });
+      }
+      
+      const token = authHeader.substring(7);
+      const jwt = require('jsonwebtoken');
+      
+      try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'clipit_super_secret_jwt_key_2024_development_only_change_in_production_123456789') as any;
+        console.log('Creator=me query - Full decoded token:', decoded);
+        console.log('Creator=me query - User ID from token:', decoded.id || decoded.userId);
+        
+        const userId = decoded.id || decoded.userId;
+        if (!userId) {
+          return res.status(401).json({ error: 'User ID not found in token' });
+        }
+        
+        paramCount++;
+        query += ` AND j.creator_id = $${paramCount}`;
+        queryParams.push(userId);
+      } catch (error) {
+        console.log('JWT verification error:', error);
+        return res.status(401).json({ error: 'Invalid token' });
+      }
+    } else if (status) {
+      paramCount++;
+      query += ` AND j.status = $${paramCount}`;
+      queryParams.push(status);
+    }
 
     if (difficulty) {
       paramCount++;
@@ -69,7 +104,11 @@ router.get('/', async (req, res: Response) => {
       LIMIT ${limitVal} OFFSET ${offsetVal}
     `;
 
+    console.log('Final query:', query);
+    console.log('Query params:', queryParams);
+    
     const result = await pool.query(query, queryParams);
+    console.log('Query result count:', result.rows.length);
 
     const jobs = result.rows.map(job => ({
       id: job.id,
@@ -166,23 +205,50 @@ router.post('/', authenticateToken, requireRole('creator'), async (req: AuthRequ
     const {
       title,
       description,
-      videoUrl,
+      contentUrl,
+      videoUrl = contentUrl, // Handle both field names
       videoDuration,
-      budget,
+      payoutPer1000Views,
+      budget = payoutPer1000Views, // Handle both field names  
       deadline,
       difficulty,
       tags = [],
       requirements,
       maxClips = 5,
-      averageViews
+      averageViews,
+      videoMetrics
     } = req.body;
 
-    if (!title || !description || !videoUrl || !videoDuration || !budget || !deadline || !difficulty) {
-      return res.status(400).json({ error: 'Missing required fields' });
+    console.log('Received job creation request:', { title, description, videoUrl, videoDuration, budget, deadline, difficulty });
+
+    if (!title || !description || !deadline || !difficulty) {
+      return res.status(400).json({ error: 'Missing required fields: title, description, deadline, difficulty' });
     }
 
-    if (!['easy', 'medium', 'hard'].includes(difficulty)) {
+    // Map frontend difficulty values to database values
+    const difficultyMap: { [key: string]: string } = {
+      'beginner': 'easy',
+      'intermediate': 'medium', 
+      'advanced': 'hard'
+    };
+    
+    const mappedDifficulty = difficultyMap[difficulty] || difficulty;
+    
+    if (!['easy', 'medium', 'hard'].includes(mappedDifficulty)) {
       return res.status(400).json({ error: 'Invalid difficulty level' });
+    }
+
+    // For file uploads, create a placeholder video URL
+    const finalVideoUrl = videoUrl || 'placeholder-video-url';
+    const finalVideoDuration = videoDuration || 0;
+    const finalBudget = budget || payoutPer1000Views || 0;
+    
+    // Handle tags array - convert comma-separated string to proper array format
+    let tagsArray = tags;
+    if (typeof tags === 'string' && tags.length > 0) {
+      tagsArray = tags.split(',').map(tag => tag.trim());
+    } else if (!Array.isArray(tags)) {
+      tagsArray = [];
     }
 
     const result = await pool.query(
@@ -192,8 +258,8 @@ router.post('/', authenticateToken, requireRole('creator'), async (req: AuthRequ
       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
       RETURNING *`,
       [
-        req.user!.id, title, description, videoUrl, videoDuration,
-        budget, deadline, difficulty, tags, requirements, maxClips, averageViews
+        req.user!.id, title, description, finalVideoUrl, finalVideoDuration,
+        finalBudget, deadline, mappedDifficulty, tagsArray, requirements, maxClips, averageViews
       ]
     );
 
