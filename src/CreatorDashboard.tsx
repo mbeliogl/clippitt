@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Plus, Eye, Users, DollarSign, Clock, Settings, LogOut, Briefcase, Heart, MessageCircle, Calendar, TrendingUp, AlertCircle, CheckCircle, Pause, ChevronRight, BarChart3, FileText, Home, Bell, X, Info, ExternalLink } from 'lucide-react';
+import { Plus, Eye, Users, DollarSign, Clock, Settings, LogOut, Briefcase, Heart, MessageCircle, Calendar, TrendingUp, AlertCircle, CheckCircle, Pause, ChevronRight, BarChart3, FileText, LayoutDashboard, Bell, X, Info, ExternalLink, Scale, Plug, BookOpen } from 'lucide-react';
 import { useAuth } from './AuthContext';
 
 interface User {
@@ -20,6 +20,7 @@ interface SidebarItem {
   id: string;
   label: string;
   icon: React.ReactNode;
+  isLink?: boolean;
 }
 
 interface Job {
@@ -44,8 +45,8 @@ interface Job {
 
 const sidebarItems: SidebarItem[] = [
   { id: 'overview', label: 'Dashboard Overview', icon: <BarChart3 className="w-4 h-4" /> },
+  { id: 'performance', label: 'Analytics', icon: <TrendingUp className="w-4 h-4" />, isLink: true },
   { id: 'recent-jobs', label: 'Recent Jobs', icon: <Briefcase className="w-4 h-4" /> },
-  { id: 'performance', label: 'Job Performance', icon: <TrendingUp className="w-4 h-4" /> },
   { id: 'payouts', label: 'Payout Tracking', icon: <DollarSign className="w-4 h-4" /> },
   { id: 'notifications', label: 'Notifications', icon: <AlertCircle className="w-4 h-4" /> },
 ];
@@ -317,7 +318,7 @@ const NotificationsModal: React.FC<{
   );
 };
 
-const Sidebar: React.FC<{ activeSection: string; onSectionClick: (id: string) => void }> = ({ 
+const Sidebar: React.FC<{ activeSection: string; onSectionClick: (item: SidebarItem) => void }> = ({ 
   activeSection, 
   onSectionClick 
 }) => {
@@ -327,7 +328,7 @@ const Sidebar: React.FC<{ activeSection: string; onSectionClick: (id: string) =>
         {sidebarItems.map((item) => (
           <button
             key={item.id}
-            onClick={() => onSectionClick(item.id)}
+            onClick={() => onSectionClick(item)}
             className={`flex items-center space-x-3 w-full p-3 rounded-xl transition-all duration-300 text-left group ${
               activeSection === item.id
                 ? 'bg-blue-600/20 text-blue-300 border border-blue-400/30'
@@ -409,6 +410,14 @@ const CreatorDashboard: React.FC = () => {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
+
+  const handleSidebarClick = (item: SidebarItem) => {
+    if (item.isLink && item.id == 'performance'){
+      navigate('/creator-analytics');
+    } else{
+      scrollToSection(item.id);
+    }
+  }
 
   useEffect(() => {
     const observerOptions = {
@@ -539,14 +548,22 @@ const CreatorDashboard: React.FC = () => {
         isOpen={showAllUpdates}
         onClose={() => setShowAllUpdates(false)}
       />
-      
-      <Sidebar activeSection={activeSection} onSectionClick={scrollToSection} />
+      {/*Handles the Analytics click */}
+      <Sidebar activeSection={activeSection} onSectionClick={handleSidebarClick} />
       
       {/* Header */}
       <div className="bg-white/10 backdrop-blur-xl border-b border-white/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
-            <div className="flex items-center">
+            <div className="flex items-center space-x-3">
+              <Link 
+                to="/" 
+                className="text-white hover:text-blue-300 transition-colors duration-300"
+                title="ClipIt Home"
+              >
+                <div className="text-xl font-bold">ClipIt</div>
+              </Link>
+              <div className="h-6 w-px bg-white/30"></div>
               <h1 className="text-2xl font-bold text-white">Creator Dashboard</h1>
             </div>
             <div className="flex items-center space-x-4">
@@ -565,11 +582,11 @@ const CreatorDashboard: React.FC = () => {
               </button>
               
               <Link 
-                to="/" 
+                to="/creator-dashboard" 
                 className="text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all duration-300"
-                title="Home"
+                title="Dashboard"
               >
-                <Home className="w-5 h-5" />
+                <LayoutDashboard className="w-5 h-5" />
               </Link>
               <Link to="/jobs" className="text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all duration-300" title="Browse Jobs">
                 <Briefcase className="w-5 h-5" />
@@ -784,105 +801,6 @@ const CreatorDashboard: React.FC = () => {
           )}
         </div>
 
-        {/* Performance Analytics */}
-        <div id="performance" className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          {/* Job Performance Overview */}
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-white flex items-center">
-                <TrendingUp className="w-5 h-5 mr-2 text-blue-400" />
-                Job Performance
-              </h3>
-              <select className="text-sm bg-white/10 border border-white/30 rounded-xl px-3 py-2 text-white">
-                <option className="bg-gray-800 text-white">Last 30 days</option>
-                <option className="bg-gray-800 text-white">Last 7 days</option>
-                <option className="bg-gray-800 text-white">All time</option>
-              </select>
-            </div>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 bg-green-500/20 backdrop-blur-sm border border-green-400/30 rounded-xl">
-                <div className="flex items-center">
-                  <CheckCircle className="w-8 h-8 text-green-400 mr-3" />
-                  <div>
-                    <p className="font-medium text-green-300">Completed Jobs</p>
-                    <p className="text-sm text-green-400/80">Successfully finished</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-2xl font-bold text-green-400">{stats.completedJobs}</p>
-                  <p className="text-xs text-green-400/80">Successfully finished</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-between p-3 bg-blue-500/20 backdrop-blur-sm border border-blue-400/30 rounded-xl">
-                <div className="flex items-center">
-                  <Clock className="w-8 h-8 text-blue-400 mr-3" />
-                  <div>
-                    <p className="font-medium text-blue-300">In Progress</p>
-                    <p className="text-sm text-blue-400/80">Currently active</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-2xl font-bold text-blue-400">{stats.inProgressJobs}</p>
-                  <p className="text-xs text-blue-400/80">Currently active</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-between p-3 bg-yellow-500/20 backdrop-blur-sm border border-yellow-400/30 rounded-xl">
-                <div className="flex items-center">
-                  <Pause className="w-8 h-8 text-yellow-400 mr-3" />
-                  <div>
-                    <p className="font-medium text-yellow-300">Paused/Draft</p>
-                    <p className="text-sm text-yellow-400/80">Inactive jobs</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-2xl font-bold text-yellow-400">{stats.pausedJobs}</p>
-                  <p className="text-xs text-yellow-400/80">Paused or cancelled</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Payout Tracking */}
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-white flex items-center">
-                <DollarSign className="w-5 h-5 mr-2 text-green-400" />
-                Payout Tracking
-              </h3>
-              <span className="text-sm text-white/60">Current month</span>
-            </div>
-            <div className="space-y-4">
-              <div className="border-l-4 border-green-400 pl-4 py-2">
-                <p className="text-sm font-medium text-white/70">Total Paid Out</p>
-                <p className="text-2xl font-bold text-green-400">{formatCurrency(1247.50)}</p>
-                <p className="text-xs text-green-400/70">Across 3 completed jobs</p>
-              </div>
-              
-              <div className="border-l-4 border-yellow-400 pl-4 py-2">
-                <p className="text-sm font-medium text-white/70">Pending Payouts</p>
-                <p className="text-2xl font-bold text-yellow-400">{formatCurrency(320.00)}</p>
-                <p className="text-xs text-yellow-400/70">2 jobs awaiting completion</p>
-              </div>
-              
-              <div className="border-l-4 border-blue-400 pl-4 py-2">
-                <p className="text-sm font-medium text-white/70">Budget Allocated</p>
-                <p className="text-2xl font-bold text-blue-400">{formatCurrency(stats.totalSpent)}</p>
-                <p className="text-xs text-blue-400/70">For active jobs</p>
-              </div>
-              
-              <div className="mt-4 pt-4 border-t border-white/20">
-                <Link 
-                  to="/payouts" 
-                  className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors duration-300"
-                >
-                  View detailed payout history →
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
 
         {/* Payout Tracking Section */}
         <div id="payouts" className="mb-8">
@@ -935,6 +853,42 @@ const CreatorDashboard: React.FC = () => {
         </div>
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="py-12 px-6 sm:px-8 border-t border-white/20 bg-gradient-to-r from-gray-900/50 to-blue-900/50 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col sm:flex-row justify-between items-start w-full">
+            <div className="flex flex-col space-y-4">
+              <div className="text-2xl font-bold text-white">
+                ClipIt
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Link 
+                  to="/Legal"
+                  className="flex items-center text-gray-300 hover:text-white transition-colors">
+                  <Scale className="w-4 h-4 mr-2" />
+                  Legal
+                </Link>
+                <Link 
+                  to="/Integrations"
+                  className="flex items-center text-gray-300 hover:text-white transition-colors">
+                  <Plug className="w-4 h-4 mr-2" />
+                  Integrations
+                </Link>
+                <Link
+                  to="/about"
+                  className="flex items-center text-gray-300 hover:text-white transition-colors">
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  About Us
+                </Link>
+              </div>
+            </div>
+            <div className="text-gray-300 mt-4 sm:mt-0">
+              © 2025 ClipIt. All rights reserved.
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

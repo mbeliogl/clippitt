@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Home } from 'lucide-react';
+import { Scale, Plug, BookOpen } from 'lucide-react';
 import { useAuth } from './AuthContext';
 
 const RegisterPage: React.FC = () => {
@@ -83,17 +83,36 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      {/* Home Button */}
-      <Link 
-        to="/" 
-        className="fixed top-6 left-6 flex items-center px-4 py-2 bg-white border border-gray-300 rounded-full text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-300 shadow-sm z-10"
-      >
-        <Home className="w-4 h-4 mr-2" />
-        <span className="hidden sm:block">Home</span>
-      </Link>
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      {/* Header */}
+      <div className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <Link 
+                to="/" 
+                className="text-gray-900 hover:text-blue-600 transition-colors duration-300"
+                title="ClipIt Home"
+              >
+                <div className="text-xl font-bold">ClipIt</div>
+              </Link>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <Link 
+                to="/login"
+                className="text-gray-700 hover:text-gray-900 px-4 py-2 rounded-full transition-all duration-300"
+              >
+                Sign In
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <div className="max-w-md w-full space-y-8">
+      {/* Register Form */}
+      <div className="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Join ClipIt
@@ -240,7 +259,44 @@ const RegisterPage: React.FC = () => {
             </button>
           </div>
         </form>
+        </div>
       </div>
+
+      {/* Footer */}
+      <footer className="py-12 px-6 sm:px-8 border-t border-gray-200 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col sm:flex-row justify-between items-start w-full">
+            <div className="flex flex-col space-y-4">
+              <div className="text-2xl font-bold text-gray-900">
+                ClipIt
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Link 
+                  to="/Legal"
+                  className="flex items-center text-gray-600 hover:text-gray-800 transition-colors">
+                  <Scale className="w-4 h-4 mr-2" />
+                  Legal
+                </Link>
+                <Link 
+                  to="/Integrations"
+                  className="flex items-center text-gray-600 hover:text-gray-800 transition-colors">
+                  <Plug className="w-4 h-4 mr-2" />
+                  Integrations
+                </Link>
+                <Link
+                  to="/about"
+                  className="flex items-center text-gray-600 hover:text-gray-800 transition-colors">
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  About Us
+                </Link>
+              </div>
+            </div>
+            <div className="text-gray-600 mt-4 sm:mt-0">
+              © 2025 ClipIt. All rights reserved.
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

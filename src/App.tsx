@@ -12,6 +12,7 @@ import ClipperDashboard from './ClipperDashboard';
 import LegalPage from './Legal';
 import IntegrationsPage from './Integrations';
 import JobCreation from './JobCreation';
+import CreatorAnalytics from './CreatorAnalytics';
 
 function App() {
   return (
@@ -47,6 +48,14 @@ function App() {
                 <JobCreation />
               </ProtectedRoute>
             } 
+          />
+          <Route
+          path ="/creator-analytics"
+          element={
+            <ProtectedRoute requiredRole="creator">
+              <CreatorAnalytics />
+            </ProtectedRoute>
+            }
           />
           <Route path="/Legal" element={<LegalPage />} />
           <Route path='/Integrations' element={<IntegrationsPage />} />

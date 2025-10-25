@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Briefcase, Clock, DollarSign, Star, Settings, LogOut, TrendingUp, Home } from 'lucide-react';
+import { Search, Briefcase, Clock, DollarSign, Star, Settings, LogOut, TrendingUp, LayoutDashboard } from 'lucide-react';
 import { useAuth } from './AuthContext';
 
 interface User {
@@ -145,16 +145,24 @@ const ClipperDashboard: React.FC = () => {
       <div className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
-            <div className="flex items-center">
+            <div className="flex items-center space-x-3">
+              <Link 
+                to="/" 
+                className="text-gray-900 hover:text-blue-600 transition-colors duration-300"
+                title="ClipIt Home"
+              >
+                <div className="text-xl font-bold">ClipIt</div>
+              </Link>
+              <div className="h-6 w-px bg-gray-300"></div>
               <h1 className="text-2xl font-bold text-gray-900">Clipper Dashboard</h1>
             </div>
             <div className="flex items-center space-x-4">
               <Link 
-                to="/" 
+                to="/clipper-dashboard" 
                 className="text-gray-600 hover:text-gray-900"
-                title="Home"
+                title="Dashboard"
               >
-                <Home className="w-5 h-5" />
+                <LayoutDashboard className="w-5 h-5" />
               </Link>
               <Link to="/jobs" className="text-gray-600 hover:text-gray-900">
                 <Search className="w-5 h-5" />

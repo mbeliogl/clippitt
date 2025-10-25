@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Filter, Clock, DollarSign, Users, Calendar, Eye, Heart, MessageCircle } from 'lucide-react';
+import { Search, Filter, Clock, DollarSign, Users, Calendar, Eye, Heart, MessageCircle, User, LogOut, LayoutDashboard, Scale, Plug, BookOpen, Bell, Settings, Briefcase } from 'lucide-react';
+import { useAuth } from './AuthContext';
+
 
 interface Job {
   id: string;
@@ -39,6 +41,28 @@ const JobMarketplace: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [difficultyFilter, setDifficultyFilter] = useState('');
   const [budgetFilter, setBudgetFilter] = useState('');
+  const {isAuthenticated, user, logout} = useAuth();
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications] = useState([
+    {
+      id: 1,
+      type: 'application',
+      title: 'New Application Received',
+      message: 'Sarah C. applied to your "Podcast Highlights" job',
+      time: '2 minutes ago',
+      read: false,
+      jobId: 'job-123'
+    },
+    {
+      id: 2,
+      type: 'completion',
+      title: 'Clips Submitted',
+      message: 'Mike D. submitted 3 clips for your "Tech Talk" job',
+      time: '1 hour ago',
+      read: false,
+      jobId: 'job-456'
+    }
+  ]);
 
   useEffect(() => {
     fetchJobs();
@@ -105,6 +129,10 @@ const JobMarketplace: React.FC = () => {
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
+  const handleLogout = () => {
+    logout();
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -115,14 +143,134 @@ const JobMarketplace: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Notifications Modal */}
+      {showNotifications && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[80vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">Notifications</h3>
+              <button
+                onClick={() => setShowNotifications(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors duration-300"
+              >
+                <LogOut className="w-5 h-5 rotate-180" />
+              </button>
+            </div>
+            <div className="p-6 space-y-4 overflow-y-auto max-h-96">
+              {notifications.length > 0 ? (
+                notifications.map((notification) => (
+                  <div
+                    key={notification.id}
+                    className={`p-4 rounded-xl border transition-all duration-300 ${
+                      notification.read
+                        ? 'bg-gray-50 border-gray-200'
+                        : 'bg-blue-50 border-blue-200'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h4 className="font-medium text-gray-900 mb-1">
+                          {notification.title}
+                        </h4>
+                        <p className="text-sm text-gray-600 mb-2">
+                          {notification.message}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {notification.time}
+                        </p>
+                      </div>
+                      {!notification.read && (
+                        <div className="w-2 h-2 bg-blue-500 rounded-full ml-2 mt-1"></div>
+                      )}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-8">
+                  <Bell className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-500">No notifications yet</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+      
       {/* Header */}
       <div className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-gray-900">Job Marketplace</h1>
-            <Link to="/" className="text-indigo-600 hover:text-indigo-800">
-              ← Back to Home
-            </Link>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-3">
+              <Link 
+                to="/" 
+                className="text-gray-900 hover:text-blue-600 transition-colors duration-300"
+                title="ClipIt Home"
+              >
+                <div className="text-xl font-bold">ClipIt</div>
+              </Link>
+              <div className="h-6 w-px bg-gray-300"></div>
+              <h1 className="text-2xl font-bold text-gray-900">Job Marketplace</h1>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              {isAuthenticated && user ? (
+                <>
+                  {/* Notifications Button */}
+                  <button
+                    onClick={() => setShowNotifications(true)}
+                    className="relative text-gray-700 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 transition-all duration-300"
+                    title="Notifications"
+                  >
+                    <Bell className="w-5 h-5" />
+                    {notifications.filter(n => !n.read).length > 0 && (
+                      <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center">
+                        <span className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></span>
+                      </span>
+                    )}
+                  </button>
+                  
+                  {/* Dashboard button */}
+                  <Link 
+                    to={user.role === 'creator' ? '/creator-dashboard' : '/clipper-dashboard'}
+                    className="text-gray-700 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 transition-all duration-300"
+                    title="Dashboard"
+                  >
+                    <LayoutDashboard className="w-5 h-5" />
+                  </Link>
+                  
+                  <button 
+                    className="text-gray-700 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 transition-all duration-300" 
+                    title="Settings"
+                  >
+                    <Settings className="w-5 h-5" />
+                  </button>
+                  
+                  {/* Logout button */}
+                  <button
+                    onClick={handleLogout}
+                    className="text-gray-700 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 transition-all duration-300"
+                    title="Logout"
+                  >
+                    <LogOut className="w-5 h-5" />
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link 
+                    to="/login"
+                    className="text-gray-700 hover:text-gray-900 px-4 py-2 rounded-full transition-all duration-300"
+                  >
+                    Sign In
+                  </Link>
+                  <Link 
+                    to="/register"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition-all duration-300"
+                  >
+                    Get Started
+                  </Link>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -297,6 +445,42 @@ const JobMarketplace: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Footer */}
+      <footer className="py-12 px-6 sm:px-8 border-t border-gray-200 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col sm:flex-row justify-between items-start w-full">
+            <div className="flex flex-col space-y-4">
+              <div className="text-2xl font-bold text-gray-900">
+                ClipIt
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Link 
+                  to="/Legal"
+                  className="flex items-center text-gray-600 hover:text-gray-800 transition-colors">
+                  <Scale className="w-4 h-4 mr-2" />
+                  Legal
+                </Link>
+                <Link 
+                  to="/Integrations"
+                  className="flex items-center text-gray-600 hover:text-gray-800 transition-colors">
+                  <Plug className="w-4 h-4 mr-2" />
+                  Integrations
+                </Link>
+                <Link
+                  to="/about"
+                  className="flex items-center text-gray-600 hover:text-gray-800 transition-colors">
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  About Us
+                </Link>
+              </div>
+            </div>
+            <div className="text-gray-600 mt-4 sm:mt-0">
+              © 2025 ClipIt. All rights reserved.
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
