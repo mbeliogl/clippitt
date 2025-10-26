@@ -45,9 +45,8 @@ interface Job {
 
 const sidebarItems: SidebarItem[] = [
   { id: 'overview', label: 'Dashboard Overview', icon: <BarChart3 className="w-4 h-4" /> },
-  { id: 'performance', label: 'Analytics', icon: <TrendingUp className="w-4 h-4" />, isLink: true },
   { id: 'recent-jobs', label: 'Recent Jobs', icon: <Briefcase className="w-4 h-4" /> },
-  { id: 'payouts', label: 'Payout Tracking', icon: <DollarSign className="w-4 h-4" /> },
+  { id: 'analytics-snapshot', label: 'Analytics Snapshot', icon: <TrendingUp className="w-4 h-4" /> },
   { id: 'notifications', label: 'Notifications', icon: <AlertCircle className="w-4 h-4" /> },
 ];
 
@@ -329,10 +328,10 @@ const Sidebar: React.FC<{ activeSection: string; onSectionClick: (item: SidebarI
           <button
             key={item.id}
             onClick={() => onSectionClick(item)}
-            className={`flex items-center space-x-3 w-full p-3 rounded-xl transition-all duration-300 text-left group ${
+            className={`flex items-center space-x-3 w-full p-3 rounded-xl transition-all duration-300 text-left group border ${
               activeSection === item.id
-                ? 'bg-blue-600/20 text-blue-300 border border-blue-400/30'
-                : 'text-white/70 hover:bg-white/10 hover:text-white'
+                ? 'bg-blue-600/20 text-blue-300 border-blue-400/30'
+                : 'text-white/70 hover:bg-white/10 hover:text-white border-transparent hover:border-white/10'
             }`}
           >
             <div className={`transition-colors duration-300 ${
@@ -360,6 +359,7 @@ const CreatorDashboard: React.FC = () => {
   const [activeSection, setActiveSection] = useState('overview');
   const [showNotifications, setShowNotifications] = useState(false);
   const [showAllUpdates, setShowAllUpdates] = useState(false);
+  const [isManualScroll, setIsManualScroll] = useState(false);
   const [stats, setStats] = useState({
     totalJobs: 0,
     activeJobs: 0,
@@ -404,33 +404,41 @@ const CreatorDashboard: React.FC = () => {
   }, [token]);
 
   const scrollToSection = (sectionId: string) => {
+    setIsManualScroll(true);
     setActiveSection(sectionId);
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Reset manual scroll flag after smooth scrolling completes
+      setTimeout(() => {
+        setIsManualScroll(false);
+      }, 1000); // Smooth scroll typically takes ~800ms
     }
   };
 
   const handleSidebarClick = (item: SidebarItem) => {
-    if (item.isLink && item.id == 'performance'){
-      navigate('/creator-analytics');
-    } else{
-      scrollToSection(item.id);
-    }
+    scrollToSection(item.id);
   }
 
   useEffect(() => {
     const observerOptions = {
-      threshold: 0.3,
-      rootMargin: '-80px 0px'
+      threshold: 0.6,
+      rootMargin: '-100px 0px -50% 0px'
     };
 
     const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setActiveSection(entry.target.id);
-        }
-      });
+      // Don't update active section during manual scrolling to prevent glitching
+      if (isManualScroll) return;
+      
+      // Sort entries by their intersection ratio to prioritize the most visible section
+      const visibleEntries = entries.filter(entry => entry.isIntersecting);
+      if (visibleEntries.length > 0) {
+        // Find the entry with the highest intersection ratio
+        const mostVisible = visibleEntries.reduce((prev, current) => 
+          current.intersectionRatio > prev.intersectionRatio ? current : prev
+        );
+        setActiveSection(mostVisible.target.id);
+      }
     }, observerOptions);
 
     // Small delay to ensure elements are rendered
@@ -447,7 +455,7 @@ const CreatorDashboard: React.FC = () => {
       clearTimeout(timer);
       observer.disconnect();
     };
-  }, []);
+  }, [isManualScroll]);
 
   const loadJobs = async () => {
     try {
@@ -801,6 +809,119 @@ const CreatorDashboard: React.FC = () => {
           )}
         </div>
 
+        {/* Analytics Snapshot */}
+        <div id="analytics-snapshot" className="mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-semibold text-white">Analytics Snapshot</h3>
+            <Link to="/creator-analytics" className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors duration-300">
+              View Full Analytics →
+            </Link>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            {/* Total Views */}
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 hover:bg-white/15 transition-all duration-300">
+              <div className="flex items-center">
+                <div className="p-3 rounded-full bg-blue-500/20">
+                  <Eye className="w-6 h-6 text-blue-400" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-white/70">Total Views</p>
+                  <p className="text-2xl font-bold text-white">2.4M</p>
+                  <p className="text-xs text-green-400 flex items-center mt-1">
+                    <TrendingUp className="w-3 h-3 mr-1" />
+                    +12.5% this month
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Engagement Rate */}
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 hover:bg-white/15 transition-all duration-300">
+              <div className="flex items-center">
+                <div className="p-3 rounded-full bg-purple-500/20">
+                  <Heart className="w-6 h-6 text-purple-400" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-white/70">Engagement Rate</p>
+                  <p className="text-2xl font-bold text-white">8.3%</p>
+                  <p className="text-xs text-green-400 flex items-center mt-1">
+                    <TrendingUp className="w-3 h-3 mr-1" />
+                    +2.1% this month
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Average Views/Clip */}
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 hover:bg-white/15 transition-all duration-300">
+              <div className="flex items-center">
+                <div className="p-3 rounded-full bg-green-500/20">
+                  <BarChart3 className="w-6 h-6 text-green-400" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-white/70">Avg Views/Clip</p>
+                  <p className="text-2xl font-bold text-white">45.2K</p>
+                  <p className="text-xs text-green-400 flex items-center mt-1">
+                    <TrendingUp className="w-3 h-3 mr-1" />
+                    +8.7% this month
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Top Performer */}
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 hover:bg-white/15 transition-all duration-300">
+              <div className="flex items-center">
+                <div className="p-3 rounded-full bg-yellow-500/20">
+                  <Trophy className="w-6 h-6 text-yellow-400" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-white/70">Top Performer</p>
+                  <p className="text-lg font-bold text-white">@viral_clips</p>
+                  <p className="text-xs text-yellow-400 flex items-center mt-1">
+                    1.2M views this month
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Insights */}
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
+            <h4 className="text-lg font-semibold text-white mb-4">Quick Insights</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-white/70 text-sm">Most Popular Content Type</span>
+                  <span className="text-blue-400 font-medium">Podcast Highlights</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-white/70 text-sm">Peak Performance Day</span>
+                  <span className="text-green-400 font-medium">Tuesday</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-white/70 text-sm">Average Response Time</span>
+                  <span className="text-purple-400 font-medium">2.3 hours</span>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-white/70 text-sm">Active Clippers</span>
+                  <span className="text-orange-400 font-medium">23 this month</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-white/70 text-sm">Completion Rate</span>
+                  <span className="text-green-400 font-medium">94.2%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-white/70 text-sm">Avg. Payout per 1K Views</span>
+                  <span className="text-yellow-400 font-medium">$12.50</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Payout Tracking Section */}
         <div id="payouts" className="mb-8">

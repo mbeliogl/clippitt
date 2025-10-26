@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { LayoutDashboard, TrendingUp, DollarSign, CheckCircle, Clock, Pause, Settings, LogOut, Briefcase, Scale, Plug, BookOpen } from 'lucide-react';
+import { BarChart3, LayoutDashboard, TrendingUp, DollarSign, CheckCircle, Clock, Pause, Settings, LogOut, Briefcase, Scale, Plug, BookOpen } from 'lucide-react';
 import { useAuth } from './AuthContext';
 
 interface Job {
@@ -141,7 +141,8 @@ const CreatorAnalytics: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-white mb-2">
+          <h2 className="text-3xl font-bold text-white mb-2 flex items-center">
+            <BarChart3 className='w-8 h-8 mr-3 text-blue-400'/>
             Analytics Dashboard
           </h2>
           <p className="text-white/70">
