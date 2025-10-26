@@ -13,6 +13,7 @@ import LegalPage from './Legal';
 import IntegrationsPage from './Integrations';
 import JobCreation from './JobCreation';
 import CreatorAnalytics from './CreatorAnalytics';
+import LeaderBoardPage from './LeaderboardPage';
 
 function App() {
   return (
@@ -59,6 +60,14 @@ function App() {
           />
           <Route path="/Legal" element={<LegalPage />} />
           <Route path='/Integrations' element={<IntegrationsPage />} />
+          <Route
+          path="/LeaderboardPage"
+          element={
+            <ProtectedRoute>
+              <LeaderBoardPage /> 
+            </ProtectedRoute>
+          }
+          />
         </Routes>
       </Router>
     </AuthProvider>

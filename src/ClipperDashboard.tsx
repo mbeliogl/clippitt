@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Briefcase, Clock, DollarSign, Star, Settings, LogOut, TrendingUp, LayoutDashboard } from 'lucide-react';
+import { Search, Briefcase, Clock, DollarSign, Star, Settings, LogOut, TrendingUp, LayoutDashboard, Trophy } from 'lucide-react';
 import { useAuth } from './AuthContext';
 
 interface User {
@@ -260,6 +260,13 @@ const ClipperDashboard: React.FC = () => {
             >
               <Search className="w-5 h-5 mr-2" />
               Browse Jobs
+            </Link>
+            <Link
+              to="/LeaderboardPage"
+              className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-6 py-3 rounded-md font-medium flex items-center transition-all duration-300 transform hover:scale-105 shadow-lg"
+            >
+              <Trophy className="w-5 h-5 mr-2" />
+              {user?.role === 'creator' ? 'Creator Leaderboard' : 'Clipper Leaderboard'}
             </Link>
             <button className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-md font-medium flex items-center">
               <Star className="w-5 h-5 mr-2" />

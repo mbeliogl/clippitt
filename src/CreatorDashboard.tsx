@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Plus, Eye, Users, DollarSign, Clock, Settings, LogOut, Briefcase, Heart, MessageCircle, Calendar, TrendingUp, AlertCircle, CheckCircle, Pause, ChevronRight, BarChart3, FileText, LayoutDashboard, Bell, X, Info, ExternalLink, Scale, Plug, BookOpen } from 'lucide-react';
+import { Trophy, Plus, Eye, Users, DollarSign, Clock, Settings, LogOut, Briefcase, Heart, MessageCircle, Calendar, TrendingUp, AlertCircle, CheckCircle, Pause, ChevronRight, BarChart3, FileText, LayoutDashboard, Bell, X, Info, ExternalLink, Scale, Plug, BookOpen } from 'lucide-react';
 import { useAuth } from './AuthContext';
 
 interface User {
@@ -624,11 +624,11 @@ const CreatorDashboard: React.FC = () => {
               {/* Quick Actions */}
               <div className="flex space-x-3">
                 <Link
-                  to="/job-creation"
+                  to="/LeaderboardPage"
                   className="flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white rounded-xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg"
                 >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Job
+                  <Trophy className="w-4 h-4 mr-2" />
+                  {user?.role === 'creator' ? 'Creator Leaderboard' : 'Clipper Leaderboard'}
                 </Link>
               </div>
             </div>
