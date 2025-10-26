@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { LayoutDashboard, TrendingUp, DollarSign, CheckCircle, Clock, Pause, Settings, LogOut, Briefcase } from 'lucide-react';
+import { LayoutDashboard, TrendingUp, DollarSign, CheckCircle, Clock, Pause, Settings, LogOut, Briefcase, Scale, Plug, BookOpen } from 'lucide-react';
 import { useAuth } from './AuthContext';
 
 interface Job {
@@ -104,7 +104,7 @@ const CreatorAnalytics: React.FC = () => {
               <Link 
                 to="/" 
                 className="text-white hover:text-blue-300 transition-colors duration-300"
-                title="ClipIt Home"
+                data-tooltip="ClipIt Home"
               >
                 <div className="text-xl font-bold">ClipIt</div>
               </Link>
@@ -114,21 +114,21 @@ const CreatorAnalytics: React.FC = () => {
             <div className="flex items-center space-x-4">
               <Link 
                 to="/creator-dashboard" 
-                className="text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all duration-300"
-                title="Dashboard"
+                className="tooltip text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all duration-300"
+                data-tooltip="Dashboard"
               >
                 <LayoutDashboard className="w-5 h-5" />
               </Link>
-              <Link to="/jobs" className="text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all duration-300" title="Browse Jobs">
+              <Link to="/jobs" className="tooltip text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all duration-300" data-tooltip="Browse Jobs">
                 <Briefcase className="w-5 h-5" />
               </Link>
-              <button className="text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all duration-300" title="Settings">
+              <button className="tooltip text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all duration-300" data-tooltip="Settings">
                 <Settings className="w-5 h-5" />
               </button>
               <button
                 onClick={handleLogout}
-                className="text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all duration-300"
-                title="Logout"
+                className="tooltip text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all duration-300"
+                data-tooltip="Logout"
               >
                 <LogOut className="w-5 h-5" />
               </button>
@@ -249,6 +249,42 @@ const CreatorAnalytics: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="py-12 px-6 sm:px-8 border-t border-white/20 bg-gradient-to-r from-gray-900/50 to-blue-900/50 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col sm:flex-row justify-between items-start w-full">
+            <div className="flex flex-col space-y-4">
+              <div className="text-2xl font-bold text-white">
+                ClipIt
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Link 
+                  to="/Legal"
+                  className="flex items-center text-gray-300 hover:text-white transition-colors">
+                  <Scale className="w-4 h-4 mr-2" />
+                  Legal
+                </Link>
+                <Link 
+                  to="/Integrations"
+                  className="flex items-center text-gray-300 hover:text-white transition-colors">
+                  <Plug className="w-4 h-4 mr-2" />
+                  Integrations
+                </Link>
+                <Link
+                  to="/about"
+                  className="flex items-center text-gray-300 hover:text-white transition-colors">
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  About Us
+                </Link>
+              </div>
+            </div>
+            <div className="text-gray-300 mt-4 sm:mt-0">
+              © 2025 ClipIt. All rights reserved.
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

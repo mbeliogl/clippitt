@@ -159,23 +159,23 @@ const ClipperDashboard: React.FC = () => {
             <div className="flex items-center space-x-4">
               <Link 
                 to="/clipper-dashboard" 
-                className="text-gray-600 hover:text-gray-900"
-                title="Dashboard"
+                className="tooltip text-gray-600 hover:text-gray-900"
+                data-tooltip="Dashboard"
               >
                 <LayoutDashboard className="w-5 h-5" />
               </Link>
-              <Link to="/jobs" className="text-gray-600 hover:text-gray-900">
+              <Link to="/jobs" className="tooltip text-gray-600 hover:text-gray-900">
                 <Search className="w-5 h-5" />
               </Link>
-              <button className="text-gray-600 hover:text-gray-900">
+              <button className="tooltip text-gray-600 hover:text-gray-900">
                 <Settings className="w-5 h-5" />
               </button>
               <button
                 onClick={handleLogout}
-                className="text-gray-600 hover:text-gray-900"
-                title="Logout"
+                className="tooltip text-gray-600 hover:text-gray-900"
+                data-tooltip="Logout"
               >
-                <LogOut className="w-5 h-5" />
+                <LogOut className="tooltip w-5 h-5" />
               </button>
             </div>
           </div>

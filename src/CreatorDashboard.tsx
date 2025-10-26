@@ -570,8 +570,8 @@ const CreatorDashboard: React.FC = () => {
               {/* Notifications Button */}
               <button
                 onClick={() => setShowNotifications(true)}
-                className="relative text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all duration-300"
-                title="Notifications"
+                className="tooltip relative text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all duration-300"
+                data-tooltip="Notifications"
               >
                 <Bell className="w-5 h-5" />
                 {notifications.filter(n => !n.read).length > 0 && (
@@ -583,21 +583,21 @@ const CreatorDashboard: React.FC = () => {
               
               <Link 
                 to="/creator-dashboard" 
-                className="text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all duration-300"
-                title="Dashboard"
+                className="tooltip text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all duration-300"
+                data-tooltip="Dashboard"
               >
                 <LayoutDashboard className="w-5 h-5" />
               </Link>
-              <Link to="/jobs" className="text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all duration-300" title="Browse Jobs">
+              <Link to="/jobs" className="tooltip text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all duration-300" data-tooltip="Browse Jobs">
                 <Briefcase className="w-5 h-5" />
               </Link>
-              <button className="text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all duration-300" title="Settings">
+              <button className="tooltip text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all duration-300" data-tooltip="Settings">
                 <Settings className="w-5 h-5" />
               </button>
               <button
                 onClick={handleLogout}
-                className="text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all duration-300"
-                title="Logout"
+                className="tooltip text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all duration-300"
+                data-tooltip="Logout"
               >
                 <LogOut className="w-5 h-5" />
               </button>

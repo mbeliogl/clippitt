@@ -274,8 +274,8 @@ const JobDetail: React.FC = () => {
                   {/* Notifications Button */}
                   <button
                     onClick={() => setShowNotifications(true)}
-                    className="relative text-gray-700 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 transition-all duration-300"
-                    title="Notifications"
+                    className="tooltip relative text-gray-700 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 transition-all duration-300"
+                    data-tooltip="Notifications"
                   >
                     <Bell className="w-5 h-5" />
                     {notifications.filter(n => !n.read).length > 0 && (
@@ -287,31 +287,31 @@ const JobDetail: React.FC = () => {
                   
                   <Link 
                     to={user.role === 'creator' ? '/creator-dashboard' : '/clipper-dashboard'}
-                    className="text-gray-700 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 transition-all duration-300"
-                    title="Dashboard"
+                    className="tooltip text-gray-700 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 transition-all duration-300"
+                    data-tooltip="Dashboard"
                   >
                     <LayoutDashboard className="w-5 h-5" />
                   </Link>
                   
                   <Link 
                     to="/jobs" 
-                    className="text-gray-700 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 transition-all duration-300" 
-                    title="Browse Jobs"
+                    className="tooltip text-gray-700 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 transition-all duration-300" 
+                    data-tooltip="Browse Jobs"
                   >
                     <Briefcase className="w-5 h-5" />
                   </Link>
                   
                   <button 
-                    className="text-gray-700 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 transition-all duration-300" 
-                    title="Settings"
+                    className="tooltip text-gray-700 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 transition-all duration-300" 
+                    data-tooltip="Settings"
                   >
                     <Settings className="w-5 h-5" />
                   </button>
                   
                   <button
                     onClick={handleLogout}
-                    className="text-gray-700 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 transition-all duration-300"
-                    title="Logout"
+                    className="tooltip text-gray-700 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 transition-all duration-300"
+                    data-tooltip="Logout"
                   >
                     <LogOut className="w-5 h-5" />
                   </button>
